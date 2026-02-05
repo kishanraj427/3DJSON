@@ -1,73 +1,153 @@
-# React + TypeScript + Vite
+# 3D JSON Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive 3D visualization tool that transforms JSON data structures into explorable node graphs. Built with React, Three.js, and TypeScript.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Interactive 3D Visualization**: Navigate JSON data structures in 3D space with intuitive controls
+- **Type-Specific Visual Encoding**: Different node types (objects, arrays, primitives) are rendered with distinct shapes and colors
+- **Multiple Input Methods**: Paste JSON directly, upload `.json` files, or load sample data
+- **Real-time Validation**: Instant feedback on JSON syntax and size limits
+- **Radial Tree Layout**: Hierarchical data arranged in a 3D radial tree structure
+- **Full Navigation Controls**:
+  - Rotate view (left-click + drag)
+  - Pan camera (right-click + drag or arrow keys)
+  - Zoom in/out (scroll wheel)
+- **URL-Based State**: Share visualizations via URL with encoded JSON data
 
-## React Compiler
+## Visual Design
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Objects**: Blue cubes
+- **Arrays**: Green spheres (with element count)
+- **Strings**: Orange spheres
+- **Numbers**: Purple spheres
+- **Booleans**: Yellow spheres
+- **Null**: Gray spheres
+- **Connections**: Gray semi-transparent lines between parent and child nodes
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Clone the repository
+git clone <repository-url>
+cd 3djson
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Install dependencies
+bun install
+# or
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Development
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Start the development server with hot module replacement:
+
+```bash
+bun dev
+# or
+npm run dev
 ```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Production Build
+
+```bash
+bun run build
+# or
+npm run build
+```
+
+Preview the production build:
+
+```bash
+bun run preview
+# or
+npm run preview
+```
+
+## How to Use
+
+1. **Enter JSON Data**:
+   - Type or paste JSON into the text area on the home page
+   - Upload a `.json` file using the "Upload File" button
+   - Click "Load Sample JSON" to see an example
+
+2. **Visualize**:
+   - Click the "Visualize" button to generate the 3D graph
+   - The JSON data is validated before visualization
+
+3. **Navigate the 3D View**:
+   - **Left-click + drag**: Rotate the camera around the scene
+   - **Right-click + drag**: Pan the camera up/down/left/right
+   - **Arrow keys**: Pan the view with keyboard
+   - **Scroll wheel**: Zoom in and out
+   - **Back to Input**: Return to the input screen to visualize different JSON
+
+4. **Share**:
+   - Copy the URL from the visualization page to share with others
+   - The JSON data is encoded in the URL parameters
+
+## Technology Stack
+
+- **Framework**: React 19.2.0 with TypeScript 5.9
+- **Routing**: TanStack Router (file-based routing)
+- **Build Tool**: Vite 7.2.4
+- **3D Graphics**: Three.js 0.182.0 + React Three Fiber + Drei
+- **UI Framework**: Radix UI Themes 3.3.0
+- **Styling**: Tailwind CSS 4.1.18
+- **Testing**: Vitest 4.0.18
+- **Linting**: ESLint 9
+
+## Project Structure
+
+```
+src/
+├── routes/              # TanStack Router routes
+│   ├── index.tsx       # Input screen (/)
+│   ├── visualize.tsx   # 3D visualization screen (/visualize)
+│   └── __root.tsx      # Root layout
+├── components/
+│   └── scene/          # 3D rendering components
+│       ├── Scene.tsx              # Main 3D scene setup
+│       ├── JsonVisualization.tsx  # Node/edge orchestration
+│       ├── nodes/                 # Node type components
+│       │   ├── ObjectNode.tsx
+│       │   ├── ArrayNode.tsx
+│       │   └── PrimitiveNode.tsx
+│       └── edges/
+│           └── ConnectionLine.tsx
+├── utils/              # Utility functions
+│   ├── json-parser.ts         # JSON to node tree converter
+│   ├── layout-algorithm.ts    # 3D position calculator
+│   └── route-utils.ts         # URL encoding/decoding
+├── types/
+│   └── json-node.ts    # TypeScript type definitions
+└── main.tsx            # Application entry point
+```
+
+## Code Quality
+
+Run linting:
+```bash
+bun run lint
+# or
+npm run lint
+```
+
+Run tests:
+```bash
+bun run test
+# or
+npm run test
+```
+
+## Development Guide
+
+For detailed development guidance, architectural decisions, and contribution guidelines, see [CLAUDE.md](./CLAUDE.md).
+
+## License
+
+MIT
