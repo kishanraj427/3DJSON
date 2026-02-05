@@ -103,6 +103,77 @@ function InputScreen() {
     handleJsonChange(SAMPLE_JSON);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget;
+    const { selectionStart, selectionEnd, value } = textarea;
+
+    // Handle Tab key for indentation
+    if (e.key === 'Tab') {
+      e.preventDefault();
+
+      const tabChar = '  '; // 2 spaces
+      const newValue =
+        value.substring(0, selectionStart) +
+        tabChar +
+        value.substring(selectionEnd);
+
+      setJsonInput(newValue);
+      handleJsonChange(newValue);
+
+      // Set cursor position after the tab
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd =
+          selectionStart + tabChar.length;
+      }, 0);
+    }
+
+    // Handle Ctrl/Cmd + ] for indent
+    if ((e.ctrlKey || e.metaKey) && e.key === ']') {
+      e.preventDefault();
+      const lines = value.split('\n');
+      const startLine =
+        value.substring(0, selectionStart).split('\n').length - 1;
+      const endLine = value.substring(0, selectionEnd).split('\n').length - 1;
+
+      const newLines = lines.map((line, index) => {
+        if (index >= startLine && index <= endLine) {
+          return '  ' + line;
+        }
+        return line;
+      });
+
+      const newValue = newLines.join('\n');
+      setJsonInput(newValue);
+      handleJsonChange(newValue);
+    }
+
+    // Handle Ctrl/Cmd + [ for outdent
+    if ((e.ctrlKey || e.metaKey) && e.key === '[') {
+      e.preventDefault();
+      const lines = value.split('\n');
+      const startLine =
+        value.substring(0, selectionStart).split('\n').length - 1;
+      const endLine = value.substring(0, selectionEnd).split('\n').length - 1;
+
+      const newLines = lines.map((line, index) => {
+        if (index >= startLine && index <= endLine) {
+          if (line.startsWith('  ')) {
+            return line.substring(2);
+          } else if (line.startsWith(' ')) {
+            return line.substring(1);
+          } else if (line.startsWith('\t')) {
+            return line.substring(1);
+          }
+        }
+        return line;
+      });
+
+      const newValue = newLines.join('\n');
+      setJsonInput(newValue);
+      handleJsonChange(newValue);
+    }
+  };
+
   const handleVisualize = () => {
     if (!jsonInput.trim() || error) return;
 
@@ -170,6 +241,7 @@ function InputScreen() {
                 <TextArea
                   value={jsonInput}
                   onChange={(e) => handleJsonChange(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   placeholder={`{\n  "your": "json",\n  "goes": "here"\n}`}
                   rows={18}
                   className="w-full font-mono text-sm p-4 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
@@ -224,10 +296,11 @@ function InputScreen() {
                   size="4"
                   disabled={!canVisualize}
                   onClick={handleVisualize}
-                  className={`w-full mt-4 cursor-pointer transition-all duration-200 ${canVisualize
+                  className={`w-full mt-4 cursor-pointer transition-all duration-200 ${
+                    canVisualize
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
                       : 'bg-gray-300 dark:bg-gray-700'
-                    }`}
+                  }`}
                 >
                   <Zap className="w-5 h-5 mr-2" />
                   Visualize in 3D
