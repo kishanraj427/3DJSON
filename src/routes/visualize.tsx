@@ -115,11 +115,21 @@ function VisualizeScreen() {
           border: '1px solid rgba(255, 255, 255, 0.3)',
         }}
       >
-        <Box style={{ fontWeight: 'bold', marginBottom: '8px' }}>3D Controls:</Box>
-        <Box>• <strong>Left-click + drag:</strong> Rotate view</Box>
-        <Box>• <strong>Right-click + drag:</strong> Pan up/down/left/right</Box>
-        <Box>• <strong>Arrow keys:</strong> Pan view</Box>
-        <Box>• <strong>Scroll wheel:</strong> Zoom in/out</Box>
+        <Box style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+          3D Controls:
+        </Box>
+        <Box>
+          • <strong>Left-click + drag:</strong> Rotate view
+        </Box>
+        <Box>
+          • <strong>Right-click + drag:</strong> Pan up/down/left/right
+        </Box>
+        <Box>
+          • <strong>Arrow keys:</strong> Pan view
+        </Box>
+        <Box>
+          • <strong>Scroll wheel:</strong> Zoom in/out
+        </Box>
       </Box>
     </Box>
   );

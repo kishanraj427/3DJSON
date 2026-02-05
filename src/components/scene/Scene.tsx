@@ -29,7 +29,12 @@ export default function Scene({ visualizationData }: SceneProps) {
           panSpeed={2.0}
           screenSpacePanning={true}
           keyPanSpeed={10.0}
-          keys={{ LEFT: 'ArrowLeft', UP: 'ArrowUp', RIGHT: 'ArrowRight', BOTTOM: 'ArrowDown' }}
+          keys={{
+            LEFT: 'ArrowLeft',
+            UP: 'ArrowUp',
+            RIGHT: 'ArrowRight',
+            BOTTOM: 'ArrowDown',
+          }}
           listenToKeyEvents={typeof window !== 'undefined' ? window : undefined}
         />
 

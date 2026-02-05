@@ -16,10 +16,7 @@ const DEFAULT_CONFIG: LayoutConfig = {
 // Count total descendants for a node
 function countDescendants(node: JsonNode): number {
   if (node.children.length === 0) return 1;
-  return node.children.reduce(
-    (sum, child) => sum + countDescendants(child),
-    0
-  );
+  return node.children.reduce((sum, child) => sum + countDescendants(child), 0);
 }
 
 // Deep clone a node tree

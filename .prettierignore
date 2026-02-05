@@ -1,0 +1,23 @@
+# Build outputs
+dist
+build
+.next
+
+# Dependencies
+node_modules
+
+# Generated files
+*.gen.ts
+routeTree.gen.ts
+
+# Package manager
+bun.lockb
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Misc
+.DS_Store
+*.log
+coverage
+.vite

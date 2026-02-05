@@ -19,7 +19,10 @@ export function decodeJsonFromUrl(encoded: string): string | null {
 /**
  * Validate JSON size for URL (2MB browser limit)
  */
-export function validateJsonSize(json: string): { valid: boolean; error?: string } {
+export function validateJsonSize(json: string): {
+  valid: boolean;
+  error?: string;
+} {
   const encoded = encodeJsonForUrl(json);
   const maxSize = 2 * 1024 * 1024; // 2MB
 
