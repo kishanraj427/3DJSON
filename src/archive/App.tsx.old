@@ -1,0 +1,72 @@
+import { useState } from 'react';
+import type { VisualizationData } from './types/json-node';
+import { parseJson } from './utils/json-parser';
+import {
+  calculatePositions,
+  extractEdges,
+  flattenNodes,
+} from './utils/layout-algorithm';
+import InputPanel from './components/ui/InputPanel';
+import Scene from './components/scene/Scene';
+import { Box } from '@radix-ui/themes';
+
+export default function App() {
+  const [jsonInput, setJsonInput] = useState('');
+  const [parseError, setParseError] = useState<string | null>(null);
+  const [visualizationData, setVisualizationData] =
+    useState<VisualizationData>({
+      nodes: [],
+      edges: [],
+      rootNode: null,
+    });
+
+  const handleJsonChange = (json: string) => {
+    setJsonInput(json);
+
+    if (!json.trim()) {
+      setParseError(null);
+      setVisualizationData({
+        nodes: [],
+        edges: [],
+        rootNode: null,
+      });
+      return;
+    }
+
+    const { node, error } = parseJson(json);
+
+    if (error) {
+      setParseError(error);
+      setVisualizationData({
+        nodes: [],
+        edges: [],
+        rootNode: null,
+      });
+      return;
+    }
+
+    if (node) {
+      setParseError(null);
+      const positionedNode = calculatePositions(node);
+      const nodes = flattenNodes(positionedNode);
+      const edges = extractEdges(positionedNode);
+
+      setVisualizationData({
+        nodes,
+        edges,
+        rootNode: positionedNode,
+      });
+    }
+  };
+
+  return (
+    <Box className="flex h-screen overflow-hidden">
+      <InputPanel
+        jsonInput={jsonInput}
+        error={parseError}
+        onJsonChange={handleJsonChange}
+      />
+      <Scene visualizationData={visualizationData} />
+    </Box>
+  );
+}

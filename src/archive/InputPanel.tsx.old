@@ -1,0 +1,132 @@
+import { useRef, type ChangeEvent } from 'react';
+import { Callout, TextArea, Button, Box, Text, Flex } from '@radix-ui/themes';
+
+interface InputPanelProps {
+  jsonInput: string;
+  error: string | null;
+  onJsonChange: (json: string) => void;
+}
+
+const SAMPLE_JSON = JSON.stringify(
+  {
+    name: 'Test Application',
+    version: 1.0,
+    features: ['authentication', 'api', 'database'],
+    config: {
+      port: 3000,
+      host: 'localhost',
+      debug: true,
+    },
+    metadata: {
+      author: 'Developer',
+      license: 'MIT',
+      tags: ['web', 'api', 'json'],
+    },
+  },
+  null,
+  2
+);
+
+export default function InputPanel({
+  jsonInput,
+  error,
+  onJsonChange,
+}: InputPanelProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      onJsonChange(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleLoadSample = () => {
+    onJsonChange(SAMPLE_JSON);
+  };
+
+  return (
+    <Box className="w-96 border-r border-gray-200 p-4 flex flex-col gap-4 bg-white">
+      <Box>
+        <Text size="5" weight="bold" mb="2">
+          JSON Input
+        </Text>
+
+        <Box mb="3">
+          <TextArea
+            value={jsonInput}
+            onChange={(e) => onJsonChange(e.target.value)}
+            placeholder="Enter JSON here or upload a file..."
+            rows={15}
+            className="w-full font-mono text-sm"
+          />
+        </Box>
+
+        <Flex gap="2">
+          <Button
+            variant="soft"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Upload File
+          </Button>
+          <Button variant="outline" onClick={handleLoadSample}>
+            Load Sample JSON
+          </Button>
+        </Flex>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          onChange={handleFileUpload}
+          className="hidden"
+        />
+      </Box>
+
+      {error && (
+        <Callout.Root color="red">
+          <Callout.Text>
+            <strong>Parse Error:</strong> {error}
+          </Callout.Text>
+        </Callout.Root>
+      )}
+
+      <Box>
+        <Text size="3" weight="bold" mb="2">
+          Legend
+        </Text>
+        <Flex direction="column" gap="2">
+          <Flex align="center" gap="2">
+            <Box className="w-4 h-4 rounded bg-[#3b82f6]" />
+            <Text size="2">Object</Text>
+          </Flex>
+          <Flex align="center" gap="2">
+            <Box className="w-4 h-4 rounded-full bg-[#22c55e]" />
+            <Text size="2">Array</Text>
+          </Flex>
+          <Flex align="center" gap="2">
+            <Box className="w-4 h-4 rounded-full bg-[#f97316]" />
+            <Text size="2">String</Text>
+          </Flex>
+          <Flex align="center" gap="2">
+            <Box className="w-4 h-4 rounded-full bg-[#a855f7]" />
+            <Text size="2">Number</Text>
+          </Flex>
+          <Flex align="center" gap="2">
+            <Box className="w-4 h-4 rounded-full bg-[#eab308]" />
+            <Text size="2">Boolean</Text>
+          </Flex>
+          <Flex align="center" gap="2">
+            <Box className="w-4 h-4 rounded-full bg-[#6b7280]" />
+            <Text size="2">Null</Text>
+          </Flex>
+        </Flex>
+      </Box>
+    </Box>
+  );
+}
